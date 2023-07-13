@@ -5,6 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNShinyEngine : UIResponder<RCTBridgeDelegate>
 
++ (instancetype)shared;
 - (UIViewController *)changeRootController:(UIApplication *)application withOptions:(NSDictionary *)launchOptions;
 
 @end

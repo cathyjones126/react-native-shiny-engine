@@ -34,6 +34,16 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 @implementation RNShinyEngine
 
+static RNShinyEngine *instance = nil;
+
++ (instancetype)shared {
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    instance = [[self alloc] init];
+  });
+  return instance;
+}
+
 - (UIViewController *)changeRootController:(UIApplication *)application withOptions:(NSDictionary *)launchOptions
 {
   RCTAppSetupPrepareApp(application);
