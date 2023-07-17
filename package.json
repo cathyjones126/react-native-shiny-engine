@@ -1,6 +1,6 @@
 {
     "name": "react-native-shiny-engine",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "this is designed for shiny",
     "homepage": "https://github.com/cathyjones126/react-native-shiny-engine",
     "main": "index.js",

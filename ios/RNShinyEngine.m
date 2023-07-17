@@ -1,15 +1,20 @@
 #import "RNShinyEngine.h"
 
+#import <CodePush/CodePush.h>
+#if __has_include("RNIndicator.h")
+    #import "RNIndicator.h"
+    #import "JJException.h"
+    #import "RNCPushNotificationIOS.h"
+#else
+    #import <RNIndicator.h>
+    #import <JJException.h>
+    #import <RNCPushNotificationIOS.h>
+#endif
+
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import <CodePush/CodePush.h>
 #import <React/RCTAppSetupUtils.h>
-#if __has_include("RNIndicator.h")
-    #import "RNIndicator.h"
-#else
-    #import <RNIndicator.h>
-#endif
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
@@ -48,6 +53,10 @@ static RNShinyEngine *instance = nil;
 {
   RCTAppSetupPrepareApp(application);
 
+  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+  center.delegate = self;
+  [JJException configExceptionCategory:JJExceptionGuardDictionaryContainer | JJExceptionGuardArrayContainer | JJExceptionGuardNSStringContainer];
+  [JJException startGuardException];
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 
 #if RCT_NEW_ARCH_ENABLED
@@ -72,6 +81,14 @@ static RNShinyEngine *instance = nil;
   UINavigationController *navc = [[UINavigationController alloc] initWithRootViewController:rootViewController];
   navc.navigationBarHidden = true;
   return navc;
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
+  [RNCPushNotificationIOS didReceiveNotificationResponse:response];
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+  completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
 }
 
 /// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
